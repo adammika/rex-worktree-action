@@ -44,6 +44,14 @@ return function(addon_dir)
         },
       }
       if not w then error(window_err, 0) end
+      -- Server focus alone does not select the tab in the invoking app.
+      -- Queue selection after the palette action returns so the prompt is visible.
+      if ctx.client_id then
+        rex.client.queue("session.select", {
+          session_id = ctx.session_id,
+          window_id = w.window_id,
+        })
+      end
       return w
     end,
   }
