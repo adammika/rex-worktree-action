@@ -2,7 +2,7 @@
 
 Search **Create Worktree** in Rex's command palette. From a terminal in a Git
 checkout, it opens a new tab and prompts for a new branch name. After submission
-it creates `<main-checkout>/.worktrees/<branch>`, renames and focuses the tab,
+it creates `~/.worktrees/<git-project-directory-name>/<branch>`, renames and focuses the tab,
 and starts your login shell there. Empty input cancels; errors stay visible.
 
 Requires Rex custom actions, Git, and Python 3.9+. Uses the foreground process's
@@ -32,9 +32,13 @@ All action files remain in this repository; moving it requires updating `addon`.
 - The new branch starts at the invoking checkout's HEAD. Uncommitted changes
   stay in the original checkout; a repository needs an initial commit.
 - Existing branches or directories are rejected; nothing is overwritten.
-- Slash names such as `feature/login` produce `.worktrees/feature/login`.
-- Invoking from a linked worktree still uses the main checkout's `.worktrees`.
-- Adds `/.worktrees/` to Git's local `info/exclude`, shared by all worktrees.
+- Slash names such as `feature/login` produce `~/.worktrees/<project>/feature/login`.
+- The project directory name comes from the main checkout, including when
+  invoked from a linked worktree. For example, `rex-worktree` and `feature/login`
+  produce `~/.worktrees/rex-worktree/feature/login`.
+- Repositories with the same directory name share a destination folder;
+  an existing destination is rejected.
+- Existing worktrees stay where they are; this path applies to new worktrees.
 - Bare repos and repos using a separate Git directory are unsupported.
 - If tab naming fails after Git succeeds, the helper reports it and still opens
   the shell in the new worktree. Close cancelled/error tabs manually.

@@ -26,21 +26,13 @@ def create_worktree(directory, branch):
     if validated != branch:
         raise ValueError("Enter a literal branch name, not a previous-branch expression.")
     run("git", "-C", str(root), "rev-parse", "--verify", "HEAD")
-    base = main_root / ".worktrees"
+    base = Path.home().resolve() / ".worktrees" / main_root.name
     target = base / branch
-    # Do not let symlinks redirect creation outside the main checkout.
+    # Do not let symlinks redirect creation outside the requested storage path.
     if base.is_symlink() or target.resolve() != target.absolute():
         raise ValueError("The worktree path must not traverse a symbolic link.")
     if target.exists():
         raise ValueError("The worktree directory already exists: " + str(target))
-    # Keep generated checkouts out of git status without changing tracked files.
-    exclude = common / "info" / "exclude"
-    exclude.parent.mkdir(parents=True, exist_ok=True)
-    existing = exclude.read_text() if exclude.exists() else ""
-    if "/.worktrees/" not in existing.splitlines():
-        with exclude.open("a") as file:
-            file.write(("\n" if existing and not existing.endswith("\n") else "")
-                       + "/.worktrees/\n")
     run("git", "-C", str(root), "worktree", "add", "-b", branch, str(target))
     return target
 
