@@ -14,7 +14,7 @@ on Rex's shell PATH.
 Add these lines to your Rex `init.lua` (normally `~/.config/rex/init.lua`):
 
 ```lua
-local addon = "/Users/mika/Developer/RexAddons/rex-worktree"
+local addon = "/Users/mika/Developer/RexAddons/rex-worktree-action"
 package.path = addon .. "/?.lua;" .. package.path
 require("create_worktree")(addon)
 ```
