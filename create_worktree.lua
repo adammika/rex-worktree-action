@@ -10,11 +10,17 @@ return function(addon_dir)
       if not ctx.session_id or not ctx.block_id then
         error("Create Worktree must run from a terminal pane.", 0)
       end
-      local info, err = rex.block.call("com.superlogical.terminal", "pwd", {})
-      if not info or not info.pwd or info.pwd == "" then
-        error(err or "Cannot determine this pane's directory. Enable shell integration.", 0)
+      -- Process cwd works while Codex or another foreground program is running,
+      -- even when the shell has never emitted an OSC 7 directory report.
+      local process = rex.block.call("com.superlogical.terminal", "process", {})
+      local cwd = process and process.foreground and process.foreground.cwd
+      if not cwd or cwd == "" then
+        local info = rex.block.call("com.superlogical.terminal", "pwd", {})
+        cwd = info and info.pwd
       end
-      local cwd = info.pwd
+      if not cwd or cwd == "" then
+        error("Cannot determine this pane's directory from its process or shell integration.", 0)
+      end
       if cwd:match("^file://") then
         cwd = cwd:match("^file://[^/]*(/.*)$")
         if not cwd then error("Cannot read this pane's directory URL.", 0) end

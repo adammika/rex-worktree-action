@@ -5,8 +5,9 @@ checkout, it opens a new tab and prompts for a new branch name. After submission
 it creates `<main-checkout>/.worktrees/<branch>`, renames and focuses the tab,
 and starts your login shell there. Empty input cancels; errors stay visible.
 
-Requires Rex custom actions, Git, Python 3.9+, and shell integration reporting
-the source pane's directory. Python and Git must be on Rex's shell PATH.
+Requires Rex custom actions, Git, and Python 3.9+. Uses the foreground process's
+working directory, with shell integration as a fallback. Python and Git must be
+on Rex's shell PATH.
 
 ## Load the action
 
